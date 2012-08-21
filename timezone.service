@@ -1,0 +1,13 @@
+[Unit]
+Description=System-wide timezone information
+ConditionPathExists=|!/etc/localtime
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sysconfig/timezone
+ExecStart=/bin/cp -af /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

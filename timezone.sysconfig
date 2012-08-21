@@ -1,0 +1,5 @@
+# Time zone information.
+
+# Name of the time zone for your system
+TIMEZONE="Europe/Berlin"
+
