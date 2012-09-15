@@ -4,7 +4,7 @@
 Summary:	Timezone data
 Name:		tzdata
 Version:	%{tzdata_ver}
-Release:	2
+Release:	5
 License:	Public Domain (database), BSD/LGPL v2.1+ (code/test suite)
 Group:		Base
 Source0:	http://www.iana.org/time-zones/repository/releases/%{name}%{tzdata_ver}.tar.gz
@@ -12,7 +12,8 @@ Source0:	http://www.iana.org/time-zones/repository/releases/%{name}%{tzdata_ver}
 Source1:	http://www.iana.org/time-zones/repository/releases/tzcode%{tzcode_ver}.tar.gz
 # Source1-md5:	cc56398842289807a80791f1f654181f
 Source2:	timezone.service
-Source3:	timezone
+Source3:	timezone.sh
+Source4:	timezone
 URL:		http://www.iana.org/time-zones
 BuildRequires:	grep
 BuildRequires:	glibc-misc
@@ -31,7 +32,7 @@ grep -v tz-art.htm tz-link.htm > tz-link.html
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/sysconfig,%{systemdunitdir}}
+install -d $RPM_BUILD_ROOT{/etc/sysconfig,%{systemdunitdir},/usr/lib/systemd}
 
 for tzone in \
     	africa antarctica asia australasia europe northamerica \
@@ -44,7 +45,8 @@ done
 install iso3166.tab zone.tab $RPM_BUILD_ROOT%{_datadir}/zoneinfo
 
 install %{SOURCE2} $RPM_BUILD_ROOT%{systemdunitdir}/timezone.service
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/timezone
+install %{SOURCE3} $RPM_BUILD_ROOT/usr/lib/systemd/timezone-setup
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/timezone
 
 # behave more like glibc.spec
 ln -sf %{_sysconfdir}/localtime	$RPM_BUILD_ROOT%{_datadir}/zoneinfo/localtime
@@ -70,6 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc README Theory tz-link.html
 %ghost /etc/localtime
 %config(noreplace) %verify(not md5 mtime size) /etc/timezone
+%attr(755,root,root) /usr/lib/systemd/timezone-setup
 %{systemdunitdir}/timezone.service
 %{_datadir}/zoneinfo
 
