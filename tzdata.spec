@@ -4,7 +4,7 @@
 Summary:	Timezone data
 Name:		tzdata
 Version:	%{tzdata_ver}
-Release:	1
+Release:	2
 License:	Public Domain (database), BSD/LGPL v2.1+ (code/test suite)
 Group:		Base
 Source0:	http://www.iana.org/time-zones/repository/releases/%{name}%{tzdata_ver}.tar.gz
@@ -12,7 +12,7 @@ Source0:	http://www.iana.org/time-zones/repository/releases/%{name}%{tzdata_ver}
 Source1:	http://www.iana.org/time-zones/repository/releases/tzcode%{tzcode_ver}.tar.gz
 # Source1-md5:	cc56398842289807a80791f1f654181f
 Source2:	timezone.service
-Source3:	timezone.sysconfig
+Source3:	timezone
 URL:		http://www.iana.org/time-zones
 BuildRequires:	grep
 BuildRequires:	glibc-misc
@@ -44,7 +44,7 @@ done
 install iso3166.tab zone.tab $RPM_BUILD_ROOT%{_datadir}/zoneinfo
 
 install %{SOURCE2} $RPM_BUILD_ROOT%{systemdunitdir}/timezone.service
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/timezone
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/timezone
 
 # behave more like glibc.spec
 ln -sf %{_sysconfdir}/localtime	$RPM_BUILD_ROOT%{_datadir}/zoneinfo/localtime
@@ -63,13 +63,13 @@ rm -rf $RPM_BUILD_ROOT
 %systemd_preun timezone.service
 
 %postun
-%systemd_reload
+%systemd_postun
 
 %files
 %defattr(644,root,root,755)
 %doc README Theory tz-link.html
 %ghost /etc/localtime
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/timezone
+%config(noreplace) %verify(not md5 mtime size) /etc/timezone
 %{systemdunitdir}/timezone.service
 %{_datadir}/zoneinfo
 
